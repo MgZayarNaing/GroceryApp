@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { 
   View, Text, TextInput, FlatList, TouchableOpacity, 
-  Platform, StyleSheet, Modal, Button, StatusBar, SafeAreaView 
+  Platform, StyleSheet, Modal, Button, StatusBar
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CheckBox from '@react-native-community/checkbox';
@@ -37,7 +38,7 @@ export default function App() {
 
   const addItem = () => {
     if (item.trim() === "") return;
-    const newList = [...list, { id: Date.now().toString(), name: item, done: false }];
+    const newList = [{ id: Date.now().toString(), name: item, done: false }, ...list];
     setList(newList);
     saveList(date, newList);
     setItem("");
@@ -46,6 +47,10 @@ export default function App() {
 
   const toggleDone = (id) => {
     const newList = list.map(i => i.id === id ? { ...i, done: !i.done } : i);
+    
+    // done = true items ကို အောက်ဆုံးသို့ sort
+    newList.sort((a, b) => a.done === b.done ? 0 : a.done ? 1 : -1);
+
     setList(newList);
     saveList(date, newList);
   };
